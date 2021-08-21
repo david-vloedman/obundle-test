@@ -5,7 +5,7 @@ import Url from 'url';
 export default class CatalogPage extends PageManager {
     constructor(context) {
         super(context);
-
+        console.log(context)
         window.addEventListener('beforeunload', () => {
             if (document.activeElement.id === 'sort') {
                 window.localStorage.setItem('sortByStatus', 'selected');

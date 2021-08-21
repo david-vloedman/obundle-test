@@ -3,9 +3,13 @@ category:
     shop_by_price: true
     products:
         limit: {{theme_settings.categorypage_products_per_page}}
+cart:
+    items:
+        limit: 1
 ---
 {{inject "categoryProductsPerPage" theme_settings.categorypage_products_per_page}}
 {{inject "categoryId" category.id}}
+
 {{#partial "head"}}
     {{#if pagination.category.previous}}
         <link rel="prev" href="{{pagination.category.previous}}">
@@ -47,13 +51,9 @@ category:
             </aside>
         {{/if}}
     {{/if}}
-    
+    {{categoryId}}
 
     <div class="page-content" id="product-listing-container">
-        <form>
-            <input class="add-all-to-cart-btn button--primary" type="button" value="Add All To Cart">
-        </form>
-        
         {{> components/category/product-listing}}
         {{{region name="category_below_content"}}}
     </div>

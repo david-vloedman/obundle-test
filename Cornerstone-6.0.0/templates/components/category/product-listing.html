@@ -4,6 +4,10 @@
     {{> components/products/filter sort=pagination.category.sort}}
 
     <form action="{{urls.compare}}" method='POST' {{#if settings.data_tag_enabled}} data-list-name="Category: {{category.name}}" {{/if}} data-product-compare>
+        <input class="add-all-to-cart-btn button--primary" type="button" value="Add All To Cart">
+        {{#if cart.items}}
+            <input class="remove-all-cart-btn button--primary" type="button" value="Remove All Items">  
+        {{/if}}
         {{#if theme_settings.product_list_display_mode '===' 'grid'}}
             {{#if settings.data_tag_enabled}}
                 {{> components/products/grid products=category.products show_compare=category.show_compare theme_settings=theme_settings event="list" }}

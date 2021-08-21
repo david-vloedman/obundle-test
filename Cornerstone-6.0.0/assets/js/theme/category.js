@@ -9,6 +9,7 @@ export default class Category extends CatalogPage {
 	constructor(context) {
 		super(context)
 		this.validationDictionary = createTranslationDictionary(context)
+		this.initRemoveAllItemsBtn()
 	}
 
 	setLiveRegionAttributes($element, roleType, ariaLiveStatus) {
@@ -37,6 +38,8 @@ export default class Category extends CatalogPage {
 	onReady() {
 		this.arrangeFocusOnSortBy()
 		this.initAddAllToCartBtn()
+		
+		
 		$('[data-button-type="add-cart"]').on('click', (e) =>
 			this.setLiveRegionAttributes(
 				$(e.currentTarget).next(),
@@ -78,14 +81,13 @@ export default class Category extends CatalogPage {
 		})
 	}
 
+	initRemoveAllItemsBtn(){
+
+	}
+
 	initAddAllToCartBtn() {
 		$('.add-all-to-cart-btn').on('click', () => {
 			const data = { lineItems: this.getAllCategoryProductIds() }
-
-			const getResponseHandler = (statusCode) =>
-				statusCode !== 200
-					? CartUtils.itemCouldNotBeAdded()
-					: CartUtils.itemAdded()
 
 			CartUtils.getCart(
 				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
@@ -97,14 +99,16 @@ export default class Category extends CatalogPage {
 						data
 					).then((response) => {
 						console.log(response)
-						// getResponseHandler(response.status)
+						CartUtils.handleItemAddResponse(response)
 					})
+				} else {
+					CartUtils.createCart('/api/storefront/cart', data).then(
+						(response) => {
+							console.log(response)
+							CartUtils.handleItemAddResponse(response)
+						}
+					)
 				}
-
-				CartUtils.createCart('/api/storefront/cart', data).then((response) => {
-					console.log(response)
-					// getResponseHandler(response.status)
-				})
 			})
 		})
 	}
@@ -116,12 +120,10 @@ export default class Category extends CatalogPage {
 			ids.push($(ele).attr('data-product-id'))
 		})
 
-		const uniqueIds = ids
-			.filter((id, i) => ids.indexOf(id) === i)
-			.map((id) => ({
-				quantity: 1,
-				productId: id,
-			}))
+		return ids.map((id) => ({
+			quantity: 1,
+			productId: id,
+		}))
 
 		return uniqueIds
 	}
