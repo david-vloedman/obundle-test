@@ -50,7 +50,10 @@ category:
     
 
     <div class="page-content" id="product-listing-container">
-        <button>Add All To Cart</button>
+        <form>
+            <input class="add-all-to-cart-btn button--primary" type="button" value="Add All To Cart">
+        </form>
+        
         {{> components/category/product-listing}}
         {{{region name="category_below_content"}}}
     </div>

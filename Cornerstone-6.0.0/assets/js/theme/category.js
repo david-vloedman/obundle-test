@@ -3,6 +3,7 @@ import CatalogPage from './catalog'
 import compareProducts from './global/compare-products'
 import FacetedSearch from './common/faceted-search'
 import { createTranslationDictionary } from '../theme/common/utils/translations-utils'
+import CartUtils from './cart/cart-utils'
 
 export default class Category extends CatalogPage {
 	constructor(context) {
@@ -35,7 +36,7 @@ export default class Category extends CatalogPage {
 
 	onReady() {
 		this.arrangeFocusOnSortBy()
-
+		this.initAddAllToCartBtn()
 		$('[data-button-type="add-cart"]').on('click', (e) =>
 			this.setLiveRegionAttributes(
 				$(e.currentTarget).next(),
@@ -54,20 +55,21 @@ export default class Category extends CatalogPage {
 			this.onSortBySubmit = this.onSortBySubmit.bind(this)
 			hooks.on('sortBy-submitted', this.onSortBySubmit)
 		}
-		this.setProductImageOnHover()
+		this.initProductImageHover()
+
 		$('a.reset-btn').on('click', () =>
 			this.setLiveRegionsAttributes($('span.reset-message'), 'status', 'polite')
 		)
 		this.ariaNotifyNoProducts()
 	}
 
-	setProductImageOnHover() {
+	initProductImageHover() {
 		$('.card-figure').on('mouseenter', function () {
 			const $img = $(this).find('.card-image')
 			const src = $img.attr('src')
 			const hoverSrc = $img
 				.attr('data-hover-src')
-				.replace('{:size}', $(this).height() + "x" + $(this).width())
+				.replace('{:size}', $(this).height() + 'x' + $(this).width())
 			$img.attr('srcset', hoverSrc)
 
 			$(this).on('mouseleave', function () {
@@ -76,10 +78,53 @@ export default class Category extends CatalogPage {
 		})
 	}
 
-    addAllToCartHandler(){
-        console.log(this.context)
-    }
+	initAddAllToCartBtn() {
+		$('.add-all-to-cart-btn').on('click', () => {
+			const data = { lineItems: this.getAllCategoryProductIds() }
 
+			const getResponseHandler = (statusCode) =>
+				statusCode !== 200
+					? CartUtils.itemCouldNotBeAdded()
+					: CartUtils.itemAdded()
+
+			CartUtils.getCart(
+				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
+			).then((existingCart) => {
+				if (existingCart[0]?.id) {
+					CartUtils.addCartItem(
+						'/api/storefront/carts/',
+						existingCart[0].id,
+						data
+					).then((response) => {
+						console.log(response)
+						// getResponseHandler(response.status)
+					})
+				}
+
+				CartUtils.createCart('/api/storefront/cart', data).then((response) => {
+					console.log(response)
+					// getResponseHandler(response.status)
+				})
+			})
+		})
+	}
+
+	getAllCategoryProductIds() {
+		const ids = []
+
+		$('[data-product-id]').each((index, ele) => {
+			ids.push($(ele).attr('data-product-id'))
+		})
+
+		const uniqueIds = ids
+			.filter((id, i) => ids.indexOf(id) === i)
+			.map((id) => ({
+				quantity: 1,
+				productId: id,
+			}))
+
+		return uniqueIds
+	}
 
 	ariaNotifyNoProducts() {
 		const $noProductsMessage = $('[data-no-products-notification]')
