@@ -1,8 +1,9 @@
 {{inject 'noCompareMessage' (lang 'compare.no_compare')}}
 
 {{#if category.products}}
+    <input class="add-all-to-cart-btn button button--primary" type="button" value="Add All To Cart">
+    <input class="remove-all-cart-btn button button--primary button--hidden" type="button" value="Remove All Items">  
     {{> components/products/filter sort=pagination.category.sort}}
-
     <form action="{{urls.compare}}" method='POST' {{#if settings.data_tag_enabled}} data-list-name="Category: {{category.name}}" {{/if}} data-product-compare>
         {{#if theme_settings.product_list_display_mode '===' 'grid'}}
             {{#if settings.data_tag_enabled}}

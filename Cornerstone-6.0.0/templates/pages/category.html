@@ -3,9 +3,17 @@ category:
     shop_by_price: true
     products:
         limit: {{theme_settings.categorypage_products_per_page}}
+customer:
+    email: 
+        limit: 1
+    name:
+        limit: 1
+    phone: 
+        limit: 1
 ---
 {{inject "categoryProductsPerPage" theme_settings.categorypage_products_per_page}}
 {{inject "categoryId" category.id}}
+
 {{#partial "head"}}
     {{#if pagination.category.previous}}
         <link rel="prev" href="{{pagination.category.previous}}">
@@ -49,6 +57,17 @@ category:
     {{/if}}
 
     <div class="page-content" id="product-listing-container">
+        <div class="category-customer-banner">
+            {{#if customer}}
+                <div>Welcome, {{customer.name}}!</div>
+                <div>Your email: {{customer.email}}</div>
+                {{#if customer.phone}}
+                    <div>Your phone: {{customer.phone}}</div>
+                {{/if}}
+            {{/if}}
+            
+            
+        </div>
         {{> components/category/product-listing}}
         {{{region name="category_below_content"}}}
     </div>
@@ -56,3 +75,4 @@ category:
 
 {{/partial}}
 {{> layout/base}}
+
