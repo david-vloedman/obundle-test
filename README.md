@@ -1,5 +1,8 @@
 # oBundle Assessment
 
+## Deployment
+The current deployment of this theme can be found [here](https://obundle-test6.mybigcommerce.com/) and the preview code is "v6rj1zgrvz".
+
 ## Features added
 ### Thumbnail Image Hover on Category Page
 Changes were made to the responsive image component to include a source URL for the second image of the product. This was not ideal as the changes are now baked into the responsive image component, however, I wanted to utilize the responsive nature of the component. 
@@ -16,12 +19,16 @@ The items are added in a single POST request to the storefront API by passing an
 
 Upon testing the add all items button, I noticed that some of the sample items in the theme require an additional 'variantId'. The variant id corresponding to specific options such a color of a product. Given the additional user intervention of selecting options, I choose not to add these items to the cart via the add all items button, instead showing an alert to notify the user that the items cannot be added this way.
 ### Remove All Items from Cart Button
+A "remove all items" button was added to the category template and only appears when items are in the cart.
+
 This button, like the "add all items" button, utilizes the new cart-utils module to make requests to the storefront API.
 
 I initially wanted handlebars to handle the conditional rendering of the 'remove all items' button by bringing the stencil cart object into the category template via front matter. When I tried to do this the stencil object did not seem to immediately reflect changes to the cart. While the cart component in the top right updated immediately, the stencil object would take a few refreshes to acknowledge the changes to the cart.
 
-In light of this I decided to use jQuery and a default hidden button. This is not ideal as the button will appear after the initial rendering of the page.
+In light of this I decided to use jQuery and a default hidden button. This is not ideal as the button will appear after the initial rendering of the page. 
 ### Current Logged in Customer Details
+A banner on the category template will now display the name, email and, if present, phone number. If there is no customer currently logged in the banner will not display.
 
+I achieved this by bringing the customer stencil object into the category template and utilizing handlebars for conditional rendering.
 
 
