@@ -160,16 +160,16 @@ export default class Category extends CatalogPage {
 		swal.fire({
 			title: 'Error',
 			icon: 'error',
-			text: 'Failed to add items to cart. Some items may require additional options to be selected',
+			text: 'Failed to add items to cart. Some items may require additional options to be selected.',
 		})
 	}
 
 	itemAddedAlert() {
 		swal
 			.fire({
-				title: 'Notice',
+				title: 'Success',
 				icon: 'success',
-				text: 'All items added to cart',
+				text: 'All items added to cart.',
 			})
 			.then((result) => location.reload())
 	}
@@ -191,9 +191,9 @@ export default class Category extends CatalogPage {
 	itemsRemovedAlert() {
 		swal
 			.fire({
-				title: 'Notice',
+				title: 'Success',
 				icon: 'success',
-				text: 'All items removed from cart',
+				text: 'All items removed from cart.',
 			})
 			.then((result) => location.reload())
 	}
