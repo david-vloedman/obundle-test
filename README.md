@@ -13,7 +13,7 @@ An "add all items" button was added to the category template, which adds all pro
 
 A new JS module called cart-utils was created for the fetch requests to the storefront cart API . I pulled these functions from the big commerce documentation.
 
-When the "add all items" button is clicked a check to see if an cart exists is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
+When the "add all items" button is clicked a check to see if a cart exists is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
 
 The items are added in a single POST request to the storefront API by passing an array of line items in the request body. The product ids are pulled from the "data-product-id" attribute on the product card component.
 
