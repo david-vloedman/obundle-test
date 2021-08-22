@@ -58,11 +58,14 @@ customer:
 
     <div class="page-content" id="product-listing-container">
         <div class="category-customer-banner">
-            <div>Welcome, {{customer.name}}!</div>
-            <div>Your email: {{customer.email}}</div>
-            {{#if customer.phone}}
-                <div>Your phone: {{customer.phone}}</div>
+            {{#if customer}}
+                <div>Welcome, {{customer.name}}!</div>
+                <div>Your email: {{customer.email}}</div>
+                {{#if customer.phone}}
+                    <div>Your phone: {{customer.phone}}</div>
+                {{/if}}
             {{/if}}
+            
             
         </div>
         {{> components/category/product-listing}}
