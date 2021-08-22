@@ -50,26 +50,7 @@ export default {
 				'Content-Type': 'application/json',
 			},
 		})
-			.catch((err) => console.error(err))
+		.catch((err) => console.error(err))
 	},
 
-	itemCouldNotBeAddedAlert: () => {},
-
-	itemAddedAlert: () => {},
-
-	handleItemAddResponse(response) {
-		return response.status !== 200
-			? this.itemCouldNotBeAddedAlert()
-			: this.itemAddedAlert()
-	},
-
-	itemsCouldNotBeRemovedAlert() {},
-
-	itemsRemovedAlert() {},
-
-	handleItemsRemoveResponse(response) {
-		return response.status !== 204
-			? this.itemsCouldNotBeRemovedAlert()
-			: this.itemsRemovedAlert()
-	},
 }

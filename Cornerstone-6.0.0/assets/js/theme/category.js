@@ -81,6 +81,7 @@ export default class Category extends CatalogPage {
 	}
 
 	initRemoveAllItemsBtn() {
+		const $button = $('.remove-all-cart-btn')
 		cartUtils
 			.getCart(
 				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
@@ -88,10 +89,10 @@ export default class Category extends CatalogPage {
 			.then((cart) => {
 				// if there is a cart, show remove all button
 				if (cart[0]) {
-					$('.remove-all-cart-btn').removeClass('button--hidden')
+					$button.removeClass('button--hidden')
 				}
 
-				$('.remove-all-cart-btn').on('click', () => {
+				$button.on('click', () => {
 					// fire confirmation of delete modal
 					swal
 						.fire({
@@ -103,18 +104,13 @@ export default class Category extends CatalogPage {
 						.then((result) => {
 							// if the user confirmed, delete the cart
 							if (result.isConfirmed) {
-								// get original button label
-								const originalLabel = $('.remove-all-cart-btn').val()
 								// change the button label and disabled state while fetching
-								$('.remove-all-cart-btn')
-									.val('Removing From Cart...')
-									.prop('disabled', true)
+								$button.val('Removing From Cart...').prop('disabled', true)
 								// delete the cart
 								if (cart[0].id) {
 									cartUtils
 										.deleteCart('/api/storefront/carts/', cart[0].id)
 										.then((res) => {
-											$('.remove-all-cart-btn').val(originalLabel).prop('disabled', false)
 											this.handleItemsRemoveResponse(res)
 										})
 								}
@@ -123,7 +119,6 @@ export default class Category extends CatalogPage {
 				})
 			})
 	}
-
 
 	initAddAllToCartBtn() {
 		const data = { lineItems: this.getAllCategoryProductIds() }
@@ -143,17 +138,11 @@ export default class Category extends CatalogPage {
 					if (existingCart[0]?.id) {
 						cartUtils
 							.addCartItem('/api/storefront/carts/', existingCart[0].id, data)
-							.then((response) => {
-								console.log(response, 'existing cart')
-								this.handleItemAddResponse(response)
-							})
+							.then((response) => this.handleItemAddResponse(response))
 					} else {
 						cartUtils
 							.createCart('/api/storefront/cart', data)
-							.then((response) => {
-								console.log(response, 'new cart')
-								this.handleItemAddResponse(response)
-							})
+							.then((response) => this.handleItemAddResponse(response))
 					}
 					// reset the button to original state
 					$(this).prop('disabled', false).val(originalLabel)
@@ -165,33 +154,31 @@ export default class Category extends CatalogPage {
 		swal.fire({
 			title: 'Error',
 			icon: 'error',
-			text: 'Failed to remove items from cart, please try again.'
+			text: 'Failed to add items to cart. Some items may require additional options to be selected',
 		})
 	}
 
 	itemAddedAlert() {
-		console.log('test')
 		swal
-		.fire({
-			title: 'Notice',
-			icon: 'success',
-			text: 'All items added to cart',
-		})
-		.then((result) => location.reload())
+			.fire({
+				title: 'Notice',
+				icon: 'success',
+				text: 'All items added to cart',
+			})
+			.then((result) => location.reload())
 	}
 
 	handleItemAddResponse(response) {
-		console.log(response)
-		return response
-			? this.itemAddedAlert()
-			: this.itemCouldNotBeAddedAlert()
+		return response.status === 404
+			? this.itemCouldNotBeAddedAlert()
+			: this.itemAddedAlert()
 	}
 
 	itemsCouldNotBeRemovedAlert() {
 		swal.fire({
 			title: 'Error',
 			icon: 'error',
-			text: 'Failed to remove items from cart, please try again.'
+			text: 'Failed to remove items from cart, please try again.',
 		})
 	}
 
@@ -210,7 +197,6 @@ export default class Category extends CatalogPage {
 			? this.itemsCouldNotBeRemovedAlert()
 			: this.itemsRemovedAlert()
 	}
-
 
 	getAllCategoryProductIds() {
 		const ids = []
