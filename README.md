@@ -11,9 +11,9 @@ I considered creating two image elements in the HTML as the second image needs t
 ### Add All Items Button
 An "add all items" button was added to the category template, which adds all products visible on the screen and within the current category to the cart.
 
-A new JS module called cart-utils was created for the fetch requests to the storefront API cart. I pulled these functions from the big commerce documentation.
+A new JS module called cart-utils was created for the fetch requests to the storefront cart API . I pulled these functions from the big commerce documentation.
 
-When the add all items button is clicked a check to see if an existing cart is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
+When the "add all items" button is clicked a check to see if an existing cart is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
 
 The items are added in a single POST request to the storefront API by passing an array of line items in the request body. The product ids are pulled from the "data-product-id" attribute on the product card component.
 
