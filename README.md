@@ -26,7 +26,7 @@ This button, like the "add all items" button, utilizes the new cart-utils module
 I initially wanted handlebars to handle the conditional rendering of the 'remove all items' button by bringing the stencil cart object into the category template via front matter. When I tried to do this the stencil object did not seem to immediately reflect changes to the cart. While the cart component in the top right updated immediately, the stencil object would take a few refreshes to acknowledge the changes to the cart.
 
 In light of this I decided to use jQuery and a default hidden button. This is not ideal as the button will appear after the initial rendering of the page. 
-### Button action confirmations
+### Button Action Confirmation Alerts
 When looking through the theme I noticed "sweet-alert" is used for displaying messages to the user and decided to use it for consistency. 
 
 A confirmation for removing all items from cart was added. When the action is confirmed the fetch request takes place, when the request is done an alert is fired indicating whether or not the request was successful.
