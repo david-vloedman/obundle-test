@@ -5,7 +5,7 @@ The current deployment of this theme can be found [here](https://obundle-test6.m
 
 ## Features added
 ### Thumbnail Image Hover on Category Page
-Changes were made to the responsive image component to include a source URL for the second image of the product. This was not ideal as the changes are now baked into the responsive image component, however, I wanted to utilize the responsive nature of the component. 
+Changes were made to the responsive image component to include a source URL for the second image of the product. This was not ideal as the changes are now baked into the responsive image component, however, I wanted to utilize the responsive nature of the component and keep it consistent. 
 
 I considered creating two image elements in the HTML as the second image needs to be fetched after hovering, sometimes causing a slight delay in the image changing. I decided that ultimately, it was not worth pursuing.
 ***
@@ -32,7 +32,7 @@ In light of this I decided to use jQuery and a default hidden button. This is no
 ### Button Action Confirmation Alerts
 When looking through the theme I noticed "sweet-alert" is used for displaying messages to the user and decided to use it for consistency. 
 
-A confirmation for removing all items from cart was added. When the action is confirmed the fetch request takes place, when the request is done an alert is fired indicating whether or not the request was successful.
+A confirmation for removing all items from then cart was added. When the action is confirmed the fetch request takes place, when the request is done an alert is fired indicating whether or not the request was successful.
 
 A success/error alert was added for adding all items to the cart. If one of the items attempting to be added requires addition options to be selected, a message is displayed saying so and the items are not added. If all items were successfully added to the cart, an alert fires indicating success.
 ***
