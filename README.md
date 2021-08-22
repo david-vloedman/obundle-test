@@ -13,7 +13,7 @@ An "add all items" button was added to the category template, which adds all pro
 
 A new JS module called cart-utils was created for the fetch requests to the storefront cart API . I pulled these functions from the big commerce documentation.
 
-When the "add all items" button is clicked a check to see if an existing cart is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
+When the "add all items" button is clicked a check to see if an cart exists is performed. If the cart does exist it will add items to it and if it does not exist a cart will be made and items added to it.
 
 The items are added in a single POST request to the storefront API by passing an array of line items in the request body. The product ids are pulled from the "data-product-id" attribute on the product card component.
 
@@ -26,6 +26,13 @@ This button, like the "add all items" button, utilizes the new cart-utils module
 I initially wanted handlebars to handle the conditional rendering of the 'remove all items' button by bringing the stencil cart object into the category template via front matter. When I tried to do this the stencil object did not seem to immediately reflect changes to the cart. While the cart component in the top right updated immediately, the stencil object would take a few refreshes to acknowledge the changes to the cart.
 
 In light of this I decided to use jQuery and a default hidden button. This is not ideal as the button will appear after the initial rendering of the page. 
+### Button action confirmations
+When looking through the theme I noticed "sweet-alert" is used for displaying messages to the user and decided to use it for consistency. 
+
+A confirmation for removing all items from cart was added. When the action is confirmed the fetch request takes place, when the request is done an alert is fired indicating whether or not the request was successful.
+
+A success/error alert was added for adding all items to the cart. If one of the items attempting to be added requires addition options to be selected, a message is displayed saying so and the items are not added. If all items were successfully added to the cart, an alert fires indicating success.
+ 
 ### Current Logged in Customer Details
 A banner on the category template will now display the name, email and, if present, phone number. If there is no customer currently logged in the banner will not display.
 
