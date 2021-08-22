@@ -21,8 +21,7 @@ export default {
 			},
 			body: JSON.stringify(cartItems),
 		})
-			.then((response) => response.json())
-			.catch((err) => console.error(error))
+		.then((response) => response.json())
 	},
 
 	getCart: (url) => {

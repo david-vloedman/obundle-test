@@ -138,14 +138,20 @@ export default class Category extends CatalogPage {
 					if (existingCart[0]?.id) {
 						cartUtils
 							.addCartItem('/api/storefront/carts/', existingCart[0].id, data)
-							.then((response) => this.handleItemAddResponse(response))
+							.then((response) => {
+								this.handleItemAddResponse(response)
+								$button.prop('disabled', false).val(originalLabel)
+							})
+							.catch((err) => this.itemCouldNotBeAddedAlert())
 					} else {
 						cartUtils
 							.createCart('/api/storefront/cart', data)
-							.then((response) => this.handleItemAddResponse(response))
+							.then((response) => {
+								this.handleItemAddResponse(response)
+								$button.prop('disabled', false).val(originalLabel)
+							})
+							.catch((err) => this.itemCouldNotBeAddedAlert())
 					}
-					// reset the button to original state
-					$(this).prop('disabled', false).val(originalLabel)
 				})
 		})
 	}
@@ -169,7 +175,7 @@ export default class Category extends CatalogPage {
 	}
 
 	handleItemAddResponse(response) {
-		return response.status === 404
+		return response.status === 404 || response.status === 422
 			? this.itemCouldNotBeAddedAlert()
 			: this.itemAddedAlert()
 	}
