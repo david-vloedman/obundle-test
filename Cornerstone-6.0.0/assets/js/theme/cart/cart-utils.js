@@ -7,7 +7,9 @@ export default {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(cartItems),
-		}).then((response) => response.json())
+		})
+			.then((response) => response.json())
+			.catch((err) => console.error(err))
 	},
 
 	addCartItem: (url, cartId, cartItems) => {
@@ -18,7 +20,9 @@ export default {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(cartItems),
-		}).then((response) => response.json())
+		})
+			.then((response) => response.json())
+			.catch((err) => console.error(error))
 	},
 
 	getCart: (url) => {
@@ -35,7 +39,7 @@ export default {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		}).then((response) => response.json())
+		}).catch((err) => console.error(err))
 	},
 
 	deleteCartItem: (url, cartId, itemId) => {
@@ -45,16 +49,27 @@ export default {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		}).then((response) => response.json())
+		})
+			.catch((err) => console.error(err))
 	},
 
-	itemCouldNotBeAddedAlert() {},
+	itemCouldNotBeAddedAlert: () => {},
 
-	itemAddedAlert() {},
+	itemAddedAlert: () => {},
 
 	handleItemAddResponse(response) {
 		return response.status !== 200
 			? this.itemCouldNotBeAddedAlert()
 			: this.itemAddedAlert()
+	},
+
+	itemsCouldNotBeRemovedAlert() {},
+
+	itemsRemovedAlert() {},
+
+	handleItemsRemoveResponse(response) {
+		return response.status !== 204
+			? this.itemsCouldNotBeRemovedAlert()
+			: this.itemsRemovedAlert()
 	},
 }

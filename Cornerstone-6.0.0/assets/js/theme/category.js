@@ -3,13 +3,13 @@ import CatalogPage from './catalog'
 import compareProducts from './global/compare-products'
 import FacetedSearch from './common/faceted-search'
 import { createTranslationDictionary } from '../theme/common/utils/translations-utils'
-import CartUtils from './cart/cart-utils'
+import cartUtils from './cart/cart-utils'
+import swal from './global/sweet-alert'
 
 export default class Category extends CatalogPage {
 	constructor(context) {
 		super(context)
 		this.validationDictionary = createTranslationDictionary(context)
-		this.initRemoveAllItemsBtn()
 	}
 
 	setLiveRegionAttributes($element, roleType, ariaLiveStatus) {
@@ -38,8 +38,7 @@ export default class Category extends CatalogPage {
 	onReady() {
 		this.arrangeFocusOnSortBy()
 		this.initAddAllToCartBtn()
-		
-		
+		this.initRemoveAllItemsBtn()
 		$('[data-button-type="add-cart"]').on('click', (e) =>
 			this.setLiveRegionAttributes(
 				$(e.currentTarget).next(),
@@ -81,41 +80,141 @@ export default class Category extends CatalogPage {
 		})
 	}
 
-	initRemoveAllItemsBtn(){
+	initRemoveAllItemsBtn() {
+		cartUtils
+			.getCart(
+				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
+			)
+			.then((cart) => {
+				// if there is a cart, show remove all button
+				if (cart[0]) {
+					$('.remove-all-cart-btn').removeClass('button--hidden')
+				}
 
+				$('.remove-all-cart-btn').on('click', () => {
+					// fire confirmation of delete modal
+					swal
+						.fire({
+							title: 'Notice',
+							icon: 'warning',
+							text: 'Remove all items from cart?',
+							showCancelButton: true,
+						})
+						.then((result) => {
+							// if the user confirmed, delete the cart
+							if (result.isConfirmed) {
+								// get original button label
+								const originalLabel = $('.remove-all-cart-btn').val()
+								// change the button label and disabled state while fetching
+								$('.remove-all-cart-btn')
+									.val('Removing From Cart...')
+									.prop('disabled', true)
+								// delete the cart
+								if (cart[0].id) {
+									cartUtils
+										.deleteCart('/api/storefront/carts/', cart[0].id)
+										.then((res) => {
+											$('.remove-all-cart-btn').val(originalLabel).prop('disabled', false)
+											this.handleItemsRemoveResponse(res)
+										})
+								}
+							}
+						})
+				})
+			})
 	}
 
-	initAddAllToCartBtn() {
-		$('.add-all-to-cart-btn').on('click', () => {
-			const data = { lineItems: this.getAllCategoryProductIds() }
 
-			CartUtils.getCart(
-				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
-			).then((existingCart) => {
-				if (existingCart[0]?.id) {
-					CartUtils.addCartItem(
-						'/api/storefront/carts/',
-						existingCart[0].id,
-						data
-					).then((response) => {
-						console.log(response)
-						CartUtils.handleItemAddResponse(response)
-					})
-				} else {
-					CartUtils.createCart('/api/storefront/cart', data).then(
-						(response) => {
-							console.log(response)
-							CartUtils.handleItemAddResponse(response)
-						}
-					)
-				}
-			})
+	initAddAllToCartBtn() {
+		const data = { lineItems: this.getAllCategoryProductIds() }
+		const $button = $('.add-all-to-cart-btn')
+		$button.on('click', () => {
+			// get the original label in case the HTML is changed
+			const originalLabel = $button.val()
+			// change the button label and disable button while fetching
+			$button.val('Adding To Cart...').prop('disabled', true)
+			// try to get the current cart
+			cartUtils
+				.getCart(
+					'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
+				)
+				.then((existingCart) => {
+					// if cart exists, add items, if cart does not exist, create and add items
+					if (existingCart[0]?.id) {
+						cartUtils
+							.addCartItem('/api/storefront/carts/', existingCart[0].id, data)
+							.then((response) => {
+								console.log(response, 'existing cart')
+								this.handleItemAddResponse(response)
+							})
+					} else {
+						cartUtils
+							.createCart('/api/storefront/cart', data)
+							.then((response) => {
+								console.log(response, 'new cart')
+								this.handleItemAddResponse(response)
+							})
+					}
+					// reset the button to original state
+					$(this).prop('disabled', false).val(originalLabel)
+				})
 		})
 	}
 
+	itemCouldNotBeAddedAlert() {
+		swal.fire({
+			title: 'Error',
+			icon: 'error',
+			text: 'Failed to remove items from cart, please try again.'
+		})
+	}
+
+	itemAddedAlert() {
+		console.log('test')
+		swal
+		.fire({
+			title: 'Notice',
+			icon: 'success',
+			text: 'All items added to cart',
+		})
+		.then((result) => location.reload())
+	}
+
+	handleItemAddResponse(response) {
+		console.log(response)
+		return response
+			? this.itemAddedAlert()
+			: this.itemCouldNotBeAddedAlert()
+	}
+
+	itemsCouldNotBeRemovedAlert() {
+		swal.fire({
+			title: 'Error',
+			icon: 'error',
+			text: 'Failed to remove items from cart, please try again.'
+		})
+	}
+
+	itemsRemovedAlert() {
+		swal
+			.fire({
+				title: 'Notice',
+				icon: 'success',
+				text: 'All items removed from cart',
+			})
+			.then((result) => location.reload())
+	}
+
+	handleItemsRemoveResponse(response) {
+		return response.status !== 204
+			? this.itemsCouldNotBeRemovedAlert()
+			: this.itemsRemovedAlert()
+	}
+
+
 	getAllCategoryProductIds() {
 		const ids = []
-
+		// pull id's for each item on the page
 		$('[data-product-id]').each((index, ele) => {
 			ids.push($(ele).attr('data-product-id'))
 		})
@@ -124,8 +223,6 @@ export default class Category extends CatalogPage {
 			quantity: 1,
 			productId: id,
 		}))
-
-		return uniqueIds
 	}
 
 	ariaNotifyNoProducts() {
