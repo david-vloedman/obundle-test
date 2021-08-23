@@ -160,7 +160,7 @@ export default class Category extends CatalogPage {
 		swal.fire({
 			title: 'Error',
 			icon: 'error',
-			text: 'Failed to add items to cart. Some items may require additional options to be selected.',
+			text: 'Failed to add items to cart. Some items may require additional options to be selected. ',
 		})
 	}
 
