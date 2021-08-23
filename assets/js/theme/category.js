@@ -86,9 +86,10 @@ export default class Category extends CatalogPage {
 			.getCart(
 				'/api/storefront/cart/?include=lineItems.digitalItems.options,lineItems.physicalItems.options'
 			)
-			.then((cart) => {
+			.then((carts) => {
+				const cart = carts.pop()
 				// if there is a cart, show remove all button
-				if (cart[0]) {
+				if (cart?.id) {
 					$button.removeClass('button--hidden')
 				}
 
@@ -107,9 +108,9 @@ export default class Category extends CatalogPage {
 								// change the button label and disabled state while fetching
 								$button.val('Removing From Cart...').prop('disabled', true)
 								// delete the cart
-								if (cart[0].id) {
+								if (cart.id) {
 									cartUtils
-										.deleteCart('/api/storefront/carts/', cart[0].id)
+										.deleteCart('/api/storefront/carts/', cart.id)
 										.then((res) => {
 											this.handleItemsRemoveResponse(res)
 										})
